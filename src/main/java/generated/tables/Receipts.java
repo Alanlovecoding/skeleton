@@ -9,6 +9,7 @@ import generated.Public;
 import generated.tables.records.ReceiptsRecord;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Receipts extends TableImpl<ReceiptsRecord> {
 
-	private static final long serialVersionUID = -83145586;
+	private static final long serialVersionUID = -1448804722;
 
 	/**
 	 * The reference instance of <code>public.receipts</code>
@@ -54,6 +55,11 @@ public class Receipts extends TableImpl<ReceiptsRecord> {
 	 * The column <code>public.receipts.id</code>.
 	 */
 	public final TableField<ReceiptsRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaulted(true), this, "");
+
+	/**
+	 * The column <code>public.receipts.uploaded</code>.
+	 */
+	public final TableField<ReceiptsRecord, Date> UPLOADED = createField("uploaded", org.jooq.impl.SQLDataType.DATE.defaulted(true), this, "");
 
 	/**
 	 * The column <code>public.receipts.merchant</code>.

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import generated.tables.records.ReceiptsRecord;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+
 import java.sql.Time;
 
 /**
@@ -25,12 +27,15 @@ public class ReceiptResponse {
     @JsonProperty
     BigDecimal value;
 
+    @JsonProperty
+    Date created;
+
 
 
     public ReceiptResponse(ReceiptsRecord dbRecord) {
         this.merchantName = dbRecord.getMerchant();
         this.value = dbRecord.getAmount();
-        
         this.id = dbRecord.getId();
+        this.created = dbRecord.getUploaded();
     }
 }

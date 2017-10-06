@@ -26,7 +26,7 @@ public class TagResponse {
 
     public TagResponse(TagsRecord dbRecord) {
         this.tagName = dbRecord.getTag();
-        this.id = dbRecord.getId();
-        this.iid = dbRecord.getIid();
+        //this.id = dbRecord.getId();
+        //this.iid = dbRecord.getIid();
     }
 }

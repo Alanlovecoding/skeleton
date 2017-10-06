@@ -1,5 +1,6 @@
 CREATE TABLE receipts (
   id INT UNSIGNED AUTO_INCREMENT,
+  uploaded DATE DEFAULT CURRENT_DATE,
   merchant VARCHAR(255),
   amount DECIMAL(12,2),
   receipt_type INT UNSIGNED,
@@ -8,8 +9,6 @@ CREATE TABLE receipts (
 );
 
 CREATE TABLE tags (
-  iid INT UNSIGNED AUTO_INCREMENT,
-  id INT UNSIGNED,
-  tag VARCHAR(255),
-  PRIMARY KEY (iid)
+  receiptId INT,
+  tag VARCHAR(255)
 );

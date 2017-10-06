@@ -1,13 +1,10 @@
 package dao;
 
-import generated.tables.Receipts;
 import generated.tables.records.ReceiptsRecord;
 import generated.tables.records.TagsRecord;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
-import org.jooq.Record;
 import org.jooq.impl.DSL;
-import org.jooq.Result;
 
 import java.util.List;
 
@@ -22,47 +19,51 @@ public class TagDao {
         this.dsl = DSL.using(jooqConfig);
     }
 
-    public void update(int id, String tagName) {
-        List<ReceiptsRecord> receiptsRecordList =dsl.selectFrom(RECEIPTS)
-                .where(RECEIPTS.ID.eq(id))
-                .fetch();
+    public void put(String tagName, Integer receiptId) {
 
-        if (receiptsRecordList .isEmpty()){
-            return;
-        }
+        TagsRecord tagsRecord = dsl.selectFrom(TAGS)
+                .where(TAGS.TAG.equal(tagName), TAGS.RECEIPTID.equal(receiptId))
+                .fetchOne();
 
-        //have this receipt
-        List<TagsRecord> tagsRecordList =dsl.selectFrom(TAGS)
-                .where(TAGS.ID.eq(id))
-                .fetch();
-
-        int flag=0;
-        for (TagsRecord i : tagsRecordList){
-            if (i.getTag().equals(tagName)){
-                flag=1;
-            }
-        }
-
-        //not have this tag
-        if(flag==0){
-            dsl.insertInto(TAGS, TAGS.ID, TAGS.TAG)
-                    .values(id, tagName)
+        if (tagsRecord == null) {
+            // add tag
+            dsl.insertInto(TAGS, TAGS.TAG, TAGS.RECEIPTID)
+                    .values(tagName, receiptId)
                     .execute();
-        }
-        else{  //have this tag
+
+            // check insert was successful
+            TagsRecord tagCheck = dsl.selectFrom(TAGS)
+                    .where(TAGS.TAG.equal(tagName), TAGS.RECEIPTID.equal(receiptId))
+                    .fetchOne();
+            checkState(tagCheck != null, "Failed to add tag");
+
+        } else {
+            // delete tag
             dsl.deleteFrom(TAGS)
-                    .where(TAGS.ID.eq(id))
-                    .and(TAGS.TAG.eq(tagName))
+                    .where(TAGS.TAG.equal(tagName), TAGS.RECEIPTID.equal(receiptId))
                     .execute();
+            TagsRecord tagCheck = dsl.selectFrom(TAGS)
+                    .where(TAGS.TAG.equal(tagName), TAGS.RECEIPTID.equal(receiptId))
+                    .fetchOne();
+            checkState(tagCheck == null, "Failed to remove tag");
         }
+
+    }
+
+    public List<ReceiptsRecord> receiptsWithTag(String tagName) {
+        // Get all receiptIds from tag table that correspond to a given tag
+        List<Integer> receiptIds = dsl
+                .select(TAGS.RECEIPTID)
+                .from(TAGS)
+                .where(TAGS.TAG.eq(tagName))
+                .fetch(TAGS.RECEIPTID);
+
+        // Get all receipts from receipt table with those ids
+        return dsl.selectFrom(RECEIPTS).where(RECEIPTS.ID.in(receiptIds)).fetch();
     }
 
 
-    public List<ReceiptsRecord> getbytag(String tagName) {
-
-        //List<Record> recordList = dsl.selectFrom(RECEIPTS.innerJoin(TAGS).on(RECEIPTS.ID.equal(TAGS.ID))).fetch();
-        Result rel= dsl.select(TAGS.ID).from(TAGS).where(TAGS.TAG.eq(tagName)).fetch();
-
-        return dsl.selectFrom(RECEIPTS).where(RECEIPTS.ID.in(rel)).fetch();
+    public List<TagsRecord> getAllTags() {
+        return dsl.selectFrom(TAGS).fetch();
     }
 }
