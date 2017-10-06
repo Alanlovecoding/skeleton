@@ -1,13 +1,13 @@
-<<<<<<< HEAD
+
 
 import controllers.netidController;
 import controllers.ReceiptController;
 import controllers.TagController;
 import controllers.StaticHtmlController;
 
-=======
+
 import controllers.*;
->>>>>>> upstream/master
+
 import dao.ReceiptDao;
 import dao.TagDao;
 import io.dropwizard.Application;
@@ -51,10 +51,7 @@ public class SimpleApplication extends Application<Configuration> {
         env.jersey().register(new netidController());
         env.jersey().register(new StaticHtmlController());
         env.jersey().register(new ReceiptController(receiptDao));
-<<<<<<< HEAD
         env.jersey().register(new TagController(tagDao,receiptDao));
-=======
         env.jersey().register(new ReceiptImageController());
->>>>>>> upstream/master
     }
 }
